@@ -7,6 +7,7 @@ from nltk.book import *
 import collections
 import math
 
+
 import os
 corpus_root = 'C:\Python35/presidential_debates'
 dfiles = []
@@ -18,29 +19,18 @@ for filename in os.listdir(corpus_root):
    doc = file.read()
    file.close()
    doc = doc.lower()
-   dfiles.append(doc)
-
+   dfiles.append(doc)   
 
    
-
 # tokenize each debate file
-#from nltk.tokenize import RegexpTokenizer
 tokenizer = RegexpTokenizer(r'[a-zA-Z]+')
 tokens = []
 for i in range(30):
     tokens.append(tokenizer.tokenize(dfiles[i]))
-
-
-
-
-# thisis to check if stop words have been importes
-#from nltk.corpus import stopwords
-stopwordslist = (sorted(stopwords.words('english')))
-
-
-
+      
 
 #to remove stop words
+stopwordslist = (sorted(stopwords.words('english')))
 newtokens = []
 ntind = []
 newtokenslist = []
@@ -53,17 +43,13 @@ for k in range(30):
             if i == j:
                 matchf = 1
                 break
-        if matchf == 0:
-            #print("i = "  +i)
+        if matchf == 0:            
             newtokens.append(i)
             ntind.append(i)
-    newtokenslist.append(ntind)
-
-            
+    newtokenslist.append(ntind)            
 
 
 # stemming tokens
-#from nltk.stem.porter import PorterStemmer
 stemmer = PorterStemmer()
 newtokens2 = []
 nt2ind = []
@@ -71,6 +57,7 @@ newtokens2list = []
 for i in newtokens:
     val = stemmer.stem(i)
     newtokens2.append(val)
+   
 
 #changes for ind list
 for k in range(30):
@@ -80,56 +67,38 @@ for k in range(30):
         nt2ind.append(val)
     
     newtokens2list.append(nt2ind)   
-
-
-
-
+      
+      
 # This is to remove duplicate stemming tokens
-
 set2 = set(newtokens2)
 res = list(set2)
 ressorted = []
 ressorted = sorted(res)
 
 
-
-
 #CALCULATING NORMALIZED VECTOR FOR ALL DOCS
 #Step 1 : {[(),()],[],...}form a dictionary of all docs with (term,frequency) in that doc 
-#from nltk.book import *
-#import collections
-#import math
 docfslist = []
 #for i in range(1,30):
 for i in range(30):
-    fd1 = FreqDist(newtokens2list[i]) 
-    #print(fd1)
+    fd1 = FreqDist(newtokens2list[i])     
     len1 = len(fd1)
     doc1f = {}
     doc1fs= {}
     doc1f = dict(fd1.most_common(len1))
-    doc1fs = collections.OrderedDict(sorted(doc1f.items()))
-    #print(doc1fs)
+    doc1fs = collections.OrderedDict(sorted(doc1f.items()))   
     docfslist.append(doc1fs)
-
-
-
-
+      
+      
 #Step 2 : Calculating tfidf matrix for each document
-#from nltk.book import *
-#import collections
-#import math
-
 doc1fs_tf = {}
 doc1fstflist = []
 doc1fs_tfidf = {}
 doc1fstfidflist = []
-
 docsf_tfidf = {}
 docsfs_tfidf = {}
 docsfstfidflist = []
 
-#for im in range(29):
 for im in range(30):
     doc1fs = docfslist[im]
     doc1fstflist = []
@@ -162,12 +131,8 @@ for im in range(30):
     docsfstfidflist.append(doc1fs_tfidfs)
 
 
-
-
 #Normalizing each vecor
-
 docs_length = []
-#for i in range(29):
 for i in range(30):
     sumval = 0
     doc1fs_tfidfs = {}
@@ -181,7 +146,6 @@ for i in range(30):
     docs_length.append(doc1fs_length)
 
 docstfidf_nmvlist = []
-#for i in range(29):
 for i in range(30):
     tfidf_nmvlist = []
     doc1fs_tfidfs = {}
@@ -194,43 +158,25 @@ for i in range(30):
 docstfidf_nmvlist_d = {}
 docstfidf_nmvlist_dlist = []
 
-#for i  in range(29):
 for i in range(30):
     doc1tfidf_nmvlist = docstfidf_nmvlist[i]
     docstfidf_nmvlist_d = dict(doc1tfidf_nmvlist)
     docstfidf_nmvlist_dlist.append(docstfidf_nmvlist_d)
 
-#print("Here is final tfidf normalized vector dictionary")
-#print( docstfidf_nmvlist_dlist)
 print("Processing Completed")
 
 
-
 #Calculating query vecor and finding cosine similarity 
-#from nltk.tokenize import RegexpTokenizer
-#from nltk.stem.porter import PorterStemmer
-#from nltk.book import *
-#import math
-#import collections
-
-#print("filename_list", filename_list)
-
 tokenizer = RegexpTokenizer(r'[a-zA-Z]+')
 qtokens = []
 abc = []
 
-#print(stopwordslist)
-
 def query(qstring):
     qtokens = []
-    abc = []
-   
-    doc = qstring.lower()
-    #qtokens.append(tokenizer.tokenize(doc))
+    abc = []   
+    doc = qstring.lower()    
     abc.append(tokenizer.tokenize(doc))
     qtokens = abc[0]
-    #print("qtokens", qtokens)
-    
     qnewtokenslist = []
 
     for i in qtokens:
@@ -239,27 +185,19 @@ def query(qstring):
             if i == j:
                 matchf = 1
                 break
-        if matchf == 0:
-            #print("i = "  +i)
-            qnewtokenslist.append(i)
-    
-    
+        if matchf == 0:           
+            qnewtokenslist.append(i)    
+
     #stemming
     stemmer = PorterStemmer()
     qnewtokens2 = []
     for i in qnewtokenslist:
-        val = stemmer.stem(i)
-        #print("val " +val)
-        qnewtokens2.append(val)
-        
-    #print(qnewtokens2)
+        val = stemmer.stem(i)        
+        qnewtokens2.append(val)     
     
     # forming dictionary of term-frequency
-    fd1 = FreqDist(qnewtokens2) 
-    #print(fd1)
-    len1 = len(fd1)
-    #print("len1" , len1)
-    
+    fd1 = FreqDist(qnewtokens2)    
+    len1 = len(fd1)   
     qf = {}
     qfs= {}
     qf = dict(fd1.most_common(len1))
@@ -271,32 +209,25 @@ def query(qstring):
     qfstflist = []
 
     for k,v in qfs.items():
-        tfval = 1 + math.log10(v)    
-        #print(tfval)    
+        tfval = 1 + math.log10(v)         
         qfstflist.append((k,tfval))
     
     qfs_tf = dict(qfstflist)
-    #print("qfs_tf", qfs_tf)
     
     #Normalizing query vector
     sumval = 0
     for k,v in qfs_tf.items():
         addval = v * v
-        sumval = sumval + addval
-        #print(v)
-        #print(sumval)
-    qfs_length = math.sqrt(sumval)
-    #print(qfs_length)
+        sumval = sumval + addval       
+    qfs_length = math.sqrt(sumval)   
 
     qtf_nmvlist = []
     for k,v in qfs_tf.items():
         divval = v / qfs_length
-        qtf_nmvlist.append((k,divval))
+        qtf_nmvlist.append((k,divval))    
     
-    #print(qtf_nmvlist)
     qtf_nmv = {}
-    qtf_nmv = dict(qtf_nmvlist)
-    #print(qtf_nmv)
+    qtf_nmv = dict(qtf_nmvlist)   
 
     #to chk value of length of normalizes vector
     sumval = 0
@@ -304,53 +235,37 @@ def query(qstring):
         addval = v * v
         sumval = sumval + addval
     qnmlength = math.sqrt(sumval)
-    #print("qnmlength" , qnmlength)
-    
+        
     #to check the similarity 
     similarity = []
-
-    #for i in range(29):
     for i in range(30):
         sumval = 0
         tpd = {}
-        tpd = docstfidf_nmvlist_dlist[i]
-        #print(tpd)
+        tpd = docstfidf_nmvlist_dlist[i]        
         doc1k = []
-        doc1k = tpd.keys()
-        #print(doc1k)
+        doc1k = tpd.keys()      
         for k,v in qtf_nmv.items():
             if k in doc1k:
-                vd = tpd[k]
-                #print(vd)
+                vd = tpd[k]               
                 mulval = v * vd
                 sumval = sumval + mulval
-        similarity.append(sumval)
-        #print("sumval : " , sumval)
-    #print("similarity : " ,similarity)
+        similarity.append(sumval)       
     
-    maxsim = 0
-    #for i in range(29):
+    maxsim = 0    
     for i in range(30):
         if similarity[i] > maxsim:
             maxsim = similarity[i]
             maxdoc = i
     fi = maxdoc
-    #print(filename_list)
-    #print(fi)
-    #print("Doc with maximum similarity :",filename_list[fi])
+    
     return(filename_list[fi])
 
 
-
-
 def getcount(str):
-    count_str = newtokens2.count(str)
-    #print(count_str)
+    count_str = newtokens2.count(str)    
     return(count_str)
     
-
-    
-    
+   
 def getidf(str):
     df = 0
     for i in range(30):
@@ -364,56 +279,36 @@ def getidf(str):
     return(idfval)
     
 
-
-
-def docdocsim(str1,str2):
-    #for i in range(29):
+def docdocsim(str1,str2):    
     for i in range(30):
-        if filename_list[i] == str1:
-            #doc1_dict = docstfidf_nmvlist_dlist[i - 1]
-            doc1_dict = docstfidf_nmvlist_dlist[i]
-            #print(filename_list[i])
-        if filename_list[i] == str2:
-            #doc2_dict = docstfidf_nmvlist_dlist[i - 1]
+        if filename_list[i] == str1:            
+            doc1_dict = docstfidf_nmvlist_dlist[i]            
+        if filename_list[i] == str2:            
             doc2_dict = docstfidf_nmvlist_dlist[i]
                
     sumval = 0
     doc2k = []
-    doc2k = doc2_dict.keys()
-        #print(doc2k)
+    doc2k = doc2_dict.keys()       
     for k,v in doc1_dict.items():
         if k in doc2k:
-            vd = doc2_dict[k]
-            #print(vd)
+            vd = doc2_dict[k]          
             mulval = v * vd
             sumval = sumval + mulval
         
     return(sumval)
 
-
-            
-        
+           
 #Calculating query vecor and finding cosine similarity
-#from nltk.tokenize import RegexpTokenizer
-#from nltk.stem.porter import PorterStemmer
-#from nltk.book import *
-#import math
-#import collections
-
 tokenizer = RegexpTokenizer(r'[a-zA-Z]+')
 qtokens = []
 abc = []
 
 def query2(qstring):
     qtokens = []
-    abc = []
-    #print(qstring)
-    doc = qstring.lower()
-    #qtokens.append(tokenizer.tokenize(doc))
+    abc = []    
+    doc = qstring.lower()   
     abc.append(tokenizer.tokenize(doc))
-    qtokens = abc[0]
-    #print("qtokens", qtokens)
-    
+    qtokens = abc[0]    
     qnewtokenslist = []
 
     for i in qtokens:
@@ -422,84 +317,69 @@ def query2(qstring):
             if i == j:
                 matchf = 1
                 break
-        if matchf == 0:
-            #print("i = "  +i)
+        if matchf == 0:           
             qnewtokenslist.append(i)
        
     #stemming
     stemmer = PorterStemmer()
     qnewtokens2 = []
     for i in qnewtokenslist:
-        val = stemmer.stem(i)
-        #print("val " +val)
+        val = stemmer.stem(i)       
         qnewtokens2.append(val)
         
        
     # forming dictionary of term-frequency
-    fd1 = FreqDist(qnewtokens2) 
-    #print(fd1)
+    fd1 = FreqDist(qnewtokens2)     
     len1 = len(fd1)
-    
-    
+        
     qf = {}
     qfs= {}
     qf = dict(fd1.most_common(len1))
     
     qfs = collections.OrderedDict(sorted(qf.items()))
-    
-    
+        
     #forming tf vector for query
     
     qfs_tf = {}
     qfstflist = []
 
     for k,v in qfs.items():
-        tfval = 1 + math.log10(v)    
-        #print(tfval)    
+        tfval = 1 + math.log10(v)          
         qfstflist.append((k,tfval))
     
     qfs_tf = dict(qfstflist)
-    #print("qfs_tf", qfs_tf)
-    
+        
     #Normalizing query vector
     sumval = 0
     for k,v in qfs_tf.items():
         addval = v * v
         sumval = sumval + addval
-        #print(v)
-        #print(sumval)
-    qfs_length = math.sqrt(sumval)
-    #print(qfs_length)
+        
+    qfs_length = math.sqrt(sumval)    
 
     qtf_nmvlist = []
     for k,v in qfs_tf.items():
         divval = v / qfs_length
-        qtf_nmvlist.append((k,divval))
+        qtf_nmvlist.append((k,divval))    
     
-    #print(qtf_nmvlist)
     global  qtf_nmv2
     qtf_nmv2 = {}
     qtf_nmv2 = dict(qtf_nmvlist)
 
-
 def querydocsim(str1,str2):
     
-    query2(str1)
+    query2(str1)  
     
-    #for i in range(29):
     for i in range(30):
-        if filename_list[i] == str2:
-            #doc2_dict = docstfidf_nmvlist_dlist[i - 1]
+        if filename_list[i] == str2:            
             doc2_dict = docstfidf_nmvlist_dlist[i]
                
     sumval = 0
     doc2k = []
-    doc2k = doc2_dict.keys()
-        #print(doc2k)
+    doc2k = doc2_dict.keys()        
     for k,v in qtf_nmv2.items():
         if k in doc2k:
-            vd = doc2_dict[k]
-            #print(vd)
+            vd = doc2_dict[k]            
             mulval = v * vd
             sumval = sumval + mulval
        
