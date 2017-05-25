@@ -1,14 +1,24 @@
 
-# this is to read files
+'''
+This program builds Vector space model for given documents of US election debates from 1960 till date
+Each documnt represented by tf-idf vector
+For a given user query it finds most relevent document and returns back to user
+
+Author : Chetan There
+
+'''
+
+#Import NLTK and other required modules
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from nltk.book import *
 import collections
 import math
-
-
 import os
+
+
+# this is to read files
 corpus_root = 'C:\Python35/presidential_debates'
 dfiles = []
 filename_list = []
@@ -22,19 +32,18 @@ for filename in os.listdir(corpus_root):
    dfiles.append(doc)   
 
    
-# tokenize each debate file
+# Tokenize each debate file
 tokenizer = RegexpTokenizer(r'[a-zA-Z]+')
 tokens = []
 for i in range(30):
     tokens.append(tokenizer.tokenize(dfiles[i]))
-      
-
-#to remove stop words
+     
+   
+#To remove stop words
 stopwordslist = (sorted(stopwords.words('english')))
 newtokens = []
 ntind = []
 newtokenslist = []
-
 for k in range(30):
     ntind = []
     for i in tokens[k]:
@@ -48,8 +57,8 @@ for k in range(30):
             ntind.append(i)
     newtokenslist.append(ntind)            
 
-
-# stemming tokens
+   
+# Stemming tokens
 stemmer = PorterStemmer()
 newtokens2 = []
 nt2ind = []
@@ -58,7 +67,7 @@ for i in newtokens:
     val = stemmer.stem(i)
     newtokens2.append(val)
    
-
+   
 #changes for ind list
 for k in range(30):
     nt2ind = []
@@ -67,8 +76,8 @@ for k in range(30):
         nt2ind.append(val)
     
     newtokens2list.append(nt2ind)   
-      
-      
+       
+         
 # This is to remove duplicate stemming tokens
 set2 = set(newtokens2)
 res = list(set2)
@@ -79,7 +88,6 @@ ressorted = sorted(res)
 #CALCULATING NORMALIZED VECTOR FOR ALL DOCS
 #Step 1 : {[(),()],[],...}form a dictionary of all docs with (term,frequency) in that doc 
 docfslist = []
-#for i in range(1,30):
 for i in range(30):
     fd1 = FreqDist(newtokens2list[i])     
     len1 = len(fd1)
@@ -98,7 +106,6 @@ doc1fstfidflist = []
 docsf_tfidf = {}
 docsfs_tfidf = {}
 docsfstfidflist = []
-
 for im in range(30):
     doc1fs = docfslist[im]
     doc1fstflist = []
@@ -141,8 +148,7 @@ for i in range(30):
         addval = v * v
         sumval = sumval + addval
        
-    doc1fs_length = math.sqrt(sumval)
-  
+    doc1fs_length = math.sqrt(sumval)  
     docs_length.append(doc1fs_length)
 
 docstfidf_nmvlist = []
@@ -334,15 +340,12 @@ def query2(qstring):
         
     qf = {}
     qfs= {}
-    qf = dict(fd1.most_common(len1))
-    
+    qf = dict(fd1.most_common(len1))    
     qfs = collections.OrderedDict(sorted(qf.items()))
         
-    #forming tf vector for query
-    
+    #forming tf vector for query    
     qfs_tf = {}
     qfstflist = []
-
     for k,v in qfs.items():
         tfval = 1 + math.log10(v)          
         qfstflist.append((k,tfval))
@@ -366,10 +369,10 @@ def query2(qstring):
     qtf_nmv2 = {}
     qtf_nmv2 = dict(qtf_nmvlist)
 
+      
 def querydocsim(str1,str2):
     
-    query2(str1)  
-    
+    query2(str1)      
     for i in range(30):
         if filename_list[i] == str2:            
             doc2_dict = docstfidf_nmvlist_dlist[i]
