@@ -1,7 +1,7 @@
 '''
 This program builds Vector space model for given documents of US election debates from 1960 till date
-Each documnt represented by tf-idf vector
-For a given user query it finds most relevent document and returns back to user
+Each document represented by tf-idf vector
+For a given user query it finds most relevant document and returns back to user
 
 Author : Chetan There
 
@@ -15,7 +15,8 @@ import math
 import os
 
 # Read files
-corpus_root = 'C:/Users/Chetan There/Desktop/presidential_debates'
+corpus_root = 'presidential_debates'
+
 dfiles = []
 filename_list = []
 for filename in os.listdir(corpus_root):
@@ -27,16 +28,17 @@ for filename in os.listdir(corpus_root):
     doc = doc.lower()
     dfiles.append(doc)
 
+tot_docs = len(dfiles)
 # Tokenize each debate file
 tokenizer = RegexpTokenizer(r'[a-zA-Z]+')
 df_tokens = []
-for i in range(30):
+for i in range(tot_docs):
     df_tokens.append(tokenizer.tokenize(dfiles[i]))
 
 # Remove stop words
 stopwordslist = (sorted(stopwords.words('english')))
 df_tokens_list = []
-for i in range(30):
+for i in range(tot_docs):
     temp_list = []
     temp_list = [x for x in df_tokens[i] if x not in stopwordslist]
     df_tokens_list.append(temp_list)
@@ -48,7 +50,7 @@ df_tokens = []
 # Stemming tokens
 stemmer = PorterStemmer()
 df_tokens_list2 = []
-for i in range(30):
+for i in range(tot_docs):
     temp_list = []
     temp_list = [stemmer.stem(x) for x in df_tokens_list[i] ]
     df_tokens_list2.append(temp_list)
@@ -59,7 +61,7 @@ df_tokens_list = []
 
 # Forming Normalized Vector for each document
 df_tokens_list3 = []
-for i in range(30):
+for i in range(tot_docs):
     temp_dict = {}
     temp_dict = {x:df_tokens_list2[i].count(x) for x in df_tokens_list2[i] }
     df_tokens_list3.append(temp_dict)
@@ -75,13 +77,13 @@ for item_dict in df_tokens_list3:
         tf = 0
         tf = 1 + math.log10(v)
         df = 0
-        for i in range(30):
+        for i in range(tot_docs):
             temp_dict = {}
             temp_dict = df_tokens_list3[i]
             if k in temp_dict:
                 df += 1
         idf = 0
-        idf = math.log10(30 / df)
+        idf = math.log10(tot_docs / df)
         tfidf = tf * idf
         temp_dict2[k] = tfidf
 
